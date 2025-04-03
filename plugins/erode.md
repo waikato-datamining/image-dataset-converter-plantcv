@@ -1,17 +1,17 @@
-# dilate
+# erode
 
 * accepts: idc.api.ImageClassificationData, idc.api.ObjectDetectionData, idc.api.ImageSegmentationData
 * generates: idc.api.ImageClassificationData, idc.api.ObjectDetectionData, idc.api.ImageSegmentationData
 
-Performs morphological 'dilation' filtering. Adds pixel to center of kernel if conditions set in kernel are true. A grayscale image is required. You can use the 'rgb-to-grayscale' for the conversion.
+Perform morphological 'erosion' filtering. Keeps pixel in center of the kernel if conditions set in kernel are true, otherwise removes pixel. A grayscale image is required. You can use the 'rgb-to-grayscale' for the conversion.
 
 ```
-usage: dilate [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [-N LOGGER_NAME]
-              [-k KERNEL_SIZE] [-i NUM_ITERATIONS]
+usage: erode [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [-N LOGGER_NAME]
+             [-k KERNEL_SIZE] [-i NUM_ITERATIONS]
 
-Performs morphological 'dilation' filtering. Adds pixel to center of kernel if
-conditions set in kernel are true. A grayscale image is required. You can use
-the 'rgb-to-grayscale' for the conversion.
+Perform morphological 'erosion' filtering. Keeps pixel in center of the kernel
+if conditions set in kernel are true, otherwise removes pixel. A grayscale
+image is required. You can use the 'rgb-to-grayscale' for the conversion.
 
 options:
   -h, --help            show this help message and exit

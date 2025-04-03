@@ -3,34 +3,31 @@ import numpy as np
 from typing import List
 
 from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, flatten_list, make_list, \
-    safe_deepcopy, array_to_image, ensure_grayscale, grayscale_required_info
+    safe_deepcopy, array_to_image, ensure_binary, binary_required_info
 from plantcv import plantcv as pcv
 from seppl.io import Filter
 from wai.logging import LOGGING_WARNING
 
 
-class Dilate(Filter):
+class Fill(Filter):
     """
-    Performs morphological 'dilation' filtering. Adds pixel to center of kernel if conditions set in kernel are true.
+    Identifies objects and fills objects that are less than the specified 'size' in pixels.
     """
 
-    def __init__(self, kernel_size: int = None, num_iterations: int = None,
+    def __init__(self, size: int = None,
                  logger_name: str = None, logging_level: str = LOGGING_WARNING):
         """
         Initializes the filter.
 
-        :param kernel_size: the kernel size to use
-        :type kernel_size: int
-        :param num_iterations: the number of iterations to perform
-        :type num_iterations: int
+        :param size: the minimum object area size
+        :type size: int
         :param logger_name: the name to use for the logger
         :type logger_name: str
         :param logging_level: the logging level to use
         :type logging_level: str
         """
         super().__init__(logger_name=logger_name, logging_level=logging_level)
-        self.kernel_size = kernel_size
-        self.num_iterations = num_iterations
+        self.size = size
 
     def name(self) -> str:
         """
@@ -39,7 +36,7 @@ class Dilate(Filter):
         :return: the name
         :rtype: str
         """
-        return "dilate"
+        return "fill"
 
     def description(self) -> str:
         """
@@ -48,7 +45,7 @@ class Dilate(Filter):
         :return: the description
         :rtype: str
         """
-        return "Performs morphological 'dilation' filtering. Adds pixel to center of kernel if conditions set in kernel are true. " + grayscale_required_info()
+        return "Identifies objects and fills objects that are less than the specified 'size' in pixels. " + binary_required_info()
 
     def accepts(self) -> List:
         """
@@ -76,8 +73,7 @@ class Dilate(Filter):
         :rtype: argparse.ArgumentParser
         """
         parser = super()._create_argparser()
-        parser.add_argument("-k", "--kernel_size", type=int, help="The kernel size, must greater than 1 to have an effect.", default=3, required=False)
-        parser.add_argument("-i", "--num_iterations", type=int, help="The number of iterations to perform.", default=1, required=False)
+        parser.add_argument("-s", "--size", type=int, help="The minimum object area size in pixels.", default=1, required=False)
         return parser
 
     def _apply_args(self, ns: argparse.Namespace):
@@ -88,22 +84,17 @@ class Dilate(Filter):
         :type ns: argparse.Namespace
         """
         super()._apply_args(ns)
-        self.kernel_size = ns.kernel_size
-        self.num_iterations = ns.num_iterations
+        self.size = ns.size
 
     def initialize(self):
         """
         Initializes the processing, e.g., for opening files or databases.
         """
         super().initialize()
-        if self.kernel_size is None:
-            self.kernel_size = 3
-        if self.kernel_size < 1:
-            raise Exception("Kernel size must be at least 1, current: %s" % str(self.kernel_size))
-        if self.num_iterations is None:
-            self.num_iterations = 1
-        if self.num_iterations < 1:
-            raise Exception("# iterations must be at least 1, current: %s" % str(self.num_iterations))
+        if self.size is None:
+            self.size = 1
+        if self.size < 1:
+            raise Exception("Minimum object area size must be at least 1, current: %s" % str(self.size))
 
     def _do_process(self, data):
         """
@@ -112,16 +103,12 @@ class Dilate(Filter):
         :param data: the record(s) to process
         :return: the potentially updated record(s)
         """
-        # nothing to do?
-        if self.kernel_size == 1:
-            return flatten_list(make_list(data))
-
         result = []
         for item in make_list(data):
-            image = ensure_grayscale(item.image, logger=self.logger())
-            array_new = pcv.dilate(np.asarray(image), self.kernel_size, self.num_iterations)
+            image = ensure_binary(item.image, logger=self.logger())
+            array_new = pcv.fill(np.asarray(image), self.size)
             item_new = type(item)(image_name=item.image_name,
-                                  data=array_to_image(array_new, item.image_format)[1].getvalue(),
+                                  data=array_to_image(array_new, item.image_format, mode='1')[1].getvalue(),
                                   metadata=safe_deepcopy(item.get_metadata()),
                                   annotation=safe_deepcopy(item.annotation))
             result.append(item_new)

@@ -9,9 +9,9 @@ from seppl.io import Filter
 from wai.logging import LOGGING_WARNING
 
 
-class Dilate(Filter):
+class Erode(Filter):
     """
-    Performs morphological 'dilation' filtering. Adds pixel to center of kernel if conditions set in kernel are true.
+    Perform morphological 'erosion' filtering. Keeps pixel in center of the kernel if conditions set in kernel are true, otherwise removes pixel.
     """
 
     def __init__(self, kernel_size: int = None, num_iterations: int = None,
@@ -39,7 +39,7 @@ class Dilate(Filter):
         :return: the name
         :rtype: str
         """
-        return "dilate"
+        return "erode"
 
     def description(self) -> str:
         """
@@ -48,7 +48,7 @@ class Dilate(Filter):
         :return: the description
         :rtype: str
         """
-        return "Performs morphological 'dilation' filtering. Adds pixel to center of kernel if conditions set in kernel are true. " + grayscale_required_info()
+        return "Perform morphological 'erosion' filtering. Keeps pixel in center of the kernel if conditions set in kernel are true, otherwise removes pixel. " + grayscale_required_info()
 
     def accepts(self) -> List:
         """
@@ -119,7 +119,7 @@ class Dilate(Filter):
         result = []
         for item in make_list(data):
             image = ensure_grayscale(item.image, logger=self.logger())
-            array_new = pcv.dilate(np.asarray(image), self.kernel_size, self.num_iterations)
+            array_new = pcv.erode(np.asarray(image), self.kernel_size, self.num_iterations)
             item_new = type(item)(image_name=item.image_name,
                                   data=array_to_image(array_new, item.image_format)[1].getvalue(),
                                   metadata=safe_deepcopy(item.get_metadata()),
