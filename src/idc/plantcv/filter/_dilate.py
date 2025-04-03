@@ -3,7 +3,7 @@ import numpy as np
 from typing import List
 
 from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, flatten_list, make_list, \
-    safe_deepcopy, array_to_image
+    safe_deepcopy, array_to_image, ensure_grayscale
 from plantcv import plantcv as pcv
 from seppl.io import Filter
 from wai.logging import LOGGING_WARNING
@@ -118,10 +118,7 @@ class Dilate(Filter):
 
         result = []
         for item in make_list(data):
-            image = item.image
-            if image.mode != 'L':
-                self.logger().warning("Not a grayscale image, converting...")
-                image = image.convert('L')
+            image = ensure_grayscale(item.image, logger=self.logger())
             image_new = pcv.dilate(np.asarray(image), self.kernel_size, self.num_iterations)
             item_new = type(item)(image_name=item.image_name,
                                   data=array_to_image(image_new, item.image_format)[1].getvalue(),
