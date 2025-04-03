@@ -3,7 +3,7 @@ import numpy as np
 from typing import List
 
 from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, flatten_list, make_list, \
-    safe_deepcopy, array_to_image, ensure_grayscale
+    safe_deepcopy, array_to_image, ensure_grayscale, grayscale_required_info
 from plantcv import plantcv as pcv
 from seppl.io import Filter
 from wai.logging import LOGGING_WARNING
@@ -48,7 +48,7 @@ class Dilate(Filter):
         :return: the description
         :rtype: str
         """
-        return "Performs morphological 'dilation' filtering. Adds pixel to center of kernel if conditions set in kernel are true. The input should be a grayscale image to avoid automatic conversion."
+        return "Performs morphological 'dilation' filtering. Adds pixel to center of kernel if conditions set in kernel are true. " + grayscale_required_info()
 
     def accepts(self) -> List:
         """
