@@ -106,9 +106,9 @@ class Fill(Filter):
         result = []
         for item in make_list(data):
             image = ensure_binary(item.image, logger=self.logger())
-            array_new = pcv.fill(np.asarray(image), self.size)
+            array_new = pcv.fill(np.asarray(image).astype(np.uint8), self.size)
             item_new = type(item)(image_name=item.image_name,
-                                  data=array_to_image(array_new, item.image_format, mode='1')[1].getvalue(),
+                                  data=array_to_image(array_new, item.image_format)[1].getvalue(),
                                   metadata=safe_deepcopy(item.get_metadata()),
                                   annotation=safe_deepcopy(item.annotation))
             result.append(item_new)

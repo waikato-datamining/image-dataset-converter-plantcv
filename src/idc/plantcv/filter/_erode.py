@@ -119,7 +119,7 @@ class Erode(Filter):
         result = []
         for item in make_list(data):
             image = ensure_grayscale(item.image, logger=self.logger())
-            array_new = pcv.erode(np.asarray(image), self.kernel_size, self.num_iterations)
+            array_new = pcv.erode(np.asarray(image).astype(np.uint8), self.kernel_size, self.num_iterations)
             item_new = type(item)(image_name=item.image_name,
                                   data=array_to_image(array_new, item.image_format)[1].getvalue(),
                                   metadata=safe_deepcopy(item.get_metadata()),
