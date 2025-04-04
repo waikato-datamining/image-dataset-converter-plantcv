@@ -68,7 +68,7 @@ class FindTips(Filter):
                 lobj = LocatedObject(int(x), int(y), 1, 1, **meta)
                 lobjs.append(lobj)
             item_new = ObjectDetectionData(image_name=item.image_name,
-                                           data=array_to_image(array_new, item.image_format)[1].getvalue(),
+                                           data=safe_deepcopy(item.data), image=safe_deepcopy(item.image),
                                            metadata=safe_deepcopy(item.get_metadata()),
                                            annotation=lobjs)
             result.append(item_new)
