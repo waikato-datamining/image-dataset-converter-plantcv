@@ -39,7 +39,7 @@ class Erode(Filter):
         :return: the name
         :rtype: str
         """
-        return "erode"
+        return "pcv-erode"
 
     def description(self) -> str:
         """

@@ -39,7 +39,7 @@ class Skeletonize(Filter):
         :return: the name
         :rtype: str
         """
-        return "skeletonize"
+        return "pcv-skeletonize"
 
     def description(self) -> str:
         """

@@ -39,7 +39,7 @@ class Dilate(Filter):
         :return: the name
         :rtype: str
         """
-        return "dilate"
+        return "pcv-dilate"
 
     def description(self) -> str:
         """

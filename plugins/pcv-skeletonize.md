@@ -1,16 +1,16 @@
-# fill-holes
+# pcv-skeletonize
 
 * accepts: idc.api.ImageClassificationData, idc.api.ObjectDetectionData, idc.api.ImageSegmentationData
 * generates: idc.api.ImageClassificationData, idc.api.ObjectDetectionData, idc.api.ImageSegmentationData
 
-Flood fills holes in a binary image. A binary image is required. You can use the 'grayscale-to-binary' for the conversion.
+Reduces binary objects to 1 pixel wide representations (skeleton). A binary image is required. You can use the 'grayscale-to-binary' for the conversion.
 
 ```
-usage: fill-holes [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
-                  [-N LOGGER_NAME]
+usage: pcv-skeletonize [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
+                       [-N LOGGER_NAME] [--skip] [-p] [-s SIZE]
 
-Flood fills holes in a binary image. A binary image is required. You can use
-the 'grayscale-to-binary' for the conversion.
+Reduces binary objects to 1 pixel wide representations (skeleton). A binary
+image is required. You can use the 'grayscale-to-binary' for the conversion.
 
 options:
   -h, --help            show this help message and exit
@@ -19,4 +19,7 @@ options:
   -N LOGGER_NAME, --logger_name LOGGER_NAME
                         The custom name to use for the logger, uses the plugin
                         name by default (default: None)
+  --skip
+  -p, --prune           Whether to prune the skeleton. (default: False)
+  -s SIZE, --size SIZE  The size to get pruned off each branch. (default: 50)
 ```

@@ -20,7 +20,7 @@ class FindBranchPoints(Filter):
         :return: the name
         :rtype: str
         """
-        return "find-branch-points"
+        return "pcv-find-branch-points"
 
     def description(self) -> str:
         """

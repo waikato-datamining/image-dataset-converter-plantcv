@@ -19,7 +19,7 @@ class FillHoles(Filter):
         :return: the name
         :rtype: str
         """
-        return "fill-holes"
+        return "pcv-fill-holes"
 
     def description(self) -> str:
         """

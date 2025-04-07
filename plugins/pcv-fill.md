@@ -1,16 +1,17 @@
-# skeletonize
+# pcv-fill
 
 * accepts: idc.api.ImageClassificationData, idc.api.ObjectDetectionData, idc.api.ImageSegmentationData
 * generates: idc.api.ImageClassificationData, idc.api.ObjectDetectionData, idc.api.ImageSegmentationData
 
-Reduces binary objects to 1 pixel wide representations (skeleton). A binary image is required. You can use the 'grayscale-to-binary' for the conversion.
+Identifies objects and fills objects that are less than the specified 'size' in pixels. A binary image is required. You can use the 'grayscale-to-binary' for the conversion.
 
 ```
-usage: skeletonize [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
-                   [-N LOGGER_NAME] [-p] [-s SIZE]
+usage: pcv-fill [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [-N LOGGER_NAME]
+                [--skip] [-s SIZE]
 
-Reduces binary objects to 1 pixel wide representations (skeleton). A binary
-image is required. You can use the 'grayscale-to-binary' for the conversion.
+Identifies objects and fills objects that are less than the specified 'size'
+in pixels. A binary image is required. You can use the 'grayscale-to-binary'
+for the conversion.
 
 options:
   -h, --help            show this help message and exit
@@ -19,6 +20,6 @@ options:
   -N LOGGER_NAME, --logger_name LOGGER_NAME
                         The custom name to use for the logger, uses the plugin
                         name by default (default: None)
-  -p, --prune           Whether to prune the skeleton. (default: False)
-  -s SIZE, --size SIZE  The size to get pruned off each branch. (default: 50)
+  --skip
+  -s SIZE, --size SIZE  The minimum object area size in pixels. (default: 1)
 ```

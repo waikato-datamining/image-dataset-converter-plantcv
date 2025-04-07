@@ -1,17 +1,16 @@
-# find-tips
+# pcv-fill-holes
 
 * accepts: idc.api.ImageClassificationData, idc.api.ObjectDetectionData, idc.api.ImageSegmentationData
-* generates: idc.api.ObjectDetectionData
+* generates: idc.api.ImageClassificationData, idc.api.ObjectDetectionData, idc.api.ImageSegmentationData
 
-Finds tips in a skeletonized image and forwards them as object detection annotations. A binary image is required. You can use the 'grayscale-to-binary' for the conversion.
+Flood fills holes in a binary image. A binary image is required. You can use the 'grayscale-to-binary' for the conversion.
 
 ```
-usage: find-tips [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
-                 [-N LOGGER_NAME]
+usage: pcv-fill-holes [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
+                      [-N LOGGER_NAME] [--skip]
 
-Finds tips in a skeletonized image and forwards them as object detection
-annotations. A binary image is required. You can use the 'grayscale-to-binary'
-for the conversion.
+Flood fills holes in a binary image. A binary image is required. You can use
+the 'grayscale-to-binary' for the conversion.
 
 options:
   -h, --help            show this help message and exit
@@ -20,4 +19,5 @@ options:
   -N LOGGER_NAME, --logger_name LOGGER_NAME
                         The custom name to use for the logger, uses the plugin
                         name by default (default: None)
+  --skip
 ```

@@ -20,7 +20,7 @@ class FindTips(Filter):
         :return: the name
         :rtype: str
         """
-        return "find-tips"
+        return "pcv-find-tips"
 
     def description(self) -> str:
         """

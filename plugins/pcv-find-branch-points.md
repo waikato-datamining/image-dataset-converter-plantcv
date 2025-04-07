@@ -1,4 +1,4 @@
-# find-branch-points
+# pcv-find-branch-points
 
 * accepts: idc.api.ImageClassificationData, idc.api.ObjectDetectionData, idc.api.ImageSegmentationData
 * generates: idc.api.ObjectDetectionData
@@ -6,8 +6,8 @@
 Finds branch points in a skeletonized image and forwards them as object detection annotations. A binary image is required. You can use the 'grayscale-to-binary' for the conversion.
 
 ```
-usage: find-branch-points [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
-                          [-N LOGGER_NAME]
+usage: pcv-find-branch-points [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
+                              [-N LOGGER_NAME] [--skip]
 
 Finds branch points in a skeletonized image and forwards them as object
 detection annotations. A binary image is required. You can use the 'grayscale-
@@ -20,4 +20,5 @@ options:
   -N LOGGER_NAME, --logger_name LOGGER_NAME
                         The custom name to use for the logger, uses the plugin
                         name by default (default: None)
+  --skip
 ```
