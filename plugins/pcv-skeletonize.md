@@ -19,7 +19,8 @@ options:
   -N LOGGER_NAME, --logger_name LOGGER_NAME
                         The custom name to use for the logger, uses the plugin
                         name by default (default: None)
-  --skip
+  --skip                Disables the plugin, removing it from the pipeline.
+                        (default: False)
   -p, --prune           Whether to prune the skeleton. (default: False)
   -s SIZE, --size SIZE  The size to get pruned off each branch. (default: 50)
 ```

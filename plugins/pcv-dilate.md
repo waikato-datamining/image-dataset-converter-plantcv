@@ -21,7 +21,8 @@ options:
   -N LOGGER_NAME, --logger_name LOGGER_NAME
                         The custom name to use for the logger, uses the plugin
                         name by default (default: None)
-  --skip
+  --skip                Disables the plugin, removing it from the pipeline.
+                        (default: False)
   -k KERNEL_SIZE, --kernel_size KERNEL_SIZE
                         The kernel size, must greater than 1 to have an
                         effect. (default: 3)
