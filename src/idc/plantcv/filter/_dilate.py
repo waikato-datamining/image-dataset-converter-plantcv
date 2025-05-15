@@ -1,15 +1,15 @@
 import argparse
-import numpy as np
 from typing import List
 
-from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, flatten_list, make_list, \
-    safe_deepcopy, array_to_image, ensure_grayscale, grayscale_required_info
+import numpy as np
 from plantcv import plantcv as pcv
-from seppl.io import Filter
 from wai.logging import LOGGING_WARNING
 
+from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, grayscale_required_info
+from ._morphological_filter import MorphologicalFilter, REQUIRED_FORMAT_GRAYSCALE
 
-class Dilate(Filter):
+
+class Dilate(MorphologicalFilter):
     """
     Performs morphological 'dilation' filtering. Adds pixel to center of kernel if conditions set in kernel are true.
     """
@@ -105,25 +105,32 @@ class Dilate(Filter):
         if self.num_iterations < 1:
             raise Exception("# iterations must be at least 1, current: %s" % str(self.num_iterations))
 
-    def _do_process(self, data):
+    def _nothing_to_do(self, data) -> bool:
         """
-        Processes the data record(s).
+        Checks whether there is nothing to do, e.g., due to parameters.
 
-        :param data: the record(s) to process
-        :return: the potentially updated record(s)
+        :param data: the data to process
+        :return: whether nothing needs to be done
+        :rtype: bool
         """
-        # nothing to do?
-        if self.kernel_size == 1:
-            return flatten_list(make_list(data))
+        return self.kernel_size == 1
 
-        result = []
-        for item in make_list(data):
-            image = ensure_grayscale(item.image, logger=self.logger())
-            array_new = pcv.dilate(np.asarray(image).astype(np.uint8), self.kernel_size, self.num_iterations)
-            item_new = type(item)(image_name=item.image_name,
-                                  data=array_to_image(array_new, item.image_format)[1].getvalue(),
-                                  metadata=safe_deepcopy(item.get_metadata()),
-                                  annotation=safe_deepcopy(item.annotation))
-            result.append(item_new)
+    def _required_format(self) -> str:
+        """
+        Returns what input format is required for applying the filter.
 
-        return flatten_list(result)
+        :return: the type of image
+        :rtype: str
+        """
+        return REQUIRED_FORMAT_GRAYSCALE
+
+    def _apply_filter(self, array: np.ndarray) -> np.ndarray:
+        """
+        Applies the morphological filter to the image and returns the numpy array.
+
+        :param array: the image the filter to apply to
+        :type array: np.ndarray
+        :return: the filtered image
+        :rtype: np.ndarray
+        """
+        return pcv.dilate(array, self.kernel_size, self.num_iterations)

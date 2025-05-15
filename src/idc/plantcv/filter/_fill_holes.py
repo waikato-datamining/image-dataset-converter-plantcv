@@ -1,13 +1,13 @@
 from typing import List
 
 import numpy as np
-from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, flatten_list, make_list, \
-    safe_deepcopy, array_to_image, ensure_binary, binary_required_info
 from plantcv import plantcv as pcv
-from seppl.io import Filter
+
+from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, binary_required_info
+from ._morphological_filter import MorphologicalFilter, REQUIRED_FORMAT_BINARY
 
 
-class FillHoles(Filter):
+class FillHoles(MorphologicalFilter):
     """
     Flood fills holes in a binary image.
     """
@@ -48,21 +48,22 @@ class FillHoles(Filter):
         """
         return [ImageClassificationData, ObjectDetectionData, ImageSegmentationData]
 
-    def _do_process(self, data):
+    def _required_format(self) -> str:
         """
-        Processes the data record(s).
+        Returns what input format is required for applying the filter.
 
-        :param data: the record(s) to process
-        :return: the potentially updated record(s)
+        :return: the type of image
+        :rtype: str
         """
-        result = []
-        for item in make_list(data):
-            image = ensure_binary(item.image, logger=self.logger())
-            array_new = pcv.fill_holes(np.asarray(image).astype(np.uint8))
-            item_new = type(item)(image_name=item.image_name,
-                                  data=array_to_image(array_new, item.image_format)[1].getvalue(),
-                                  metadata=safe_deepcopy(item.get_metadata()),
-                                  annotation=safe_deepcopy(item.annotation))
-            result.append(item_new)
+        return REQUIRED_FORMAT_BINARY
 
-        return flatten_list(result)
+    def _apply_filter(self, array: np.ndarray) -> np.ndarray:
+        """
+        Applies the morphological filter to the image and returns the numpy array.
+
+        :param array: the image the filter to apply to
+        :type array: np.ndarray
+        :return: the filtered image
+        :rtype: np.ndarray
+        """
+        return pcv.fill_holes(array.astype(np.uint8))

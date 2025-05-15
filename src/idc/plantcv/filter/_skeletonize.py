@@ -2,14 +2,14 @@ import argparse
 from typing import List
 
 import numpy as np
-from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, flatten_list, make_list, \
-    safe_deepcopy, array_to_image, ensure_binary, binary_required_info
 from plantcv import plantcv as pcv
-from seppl.io import Filter
 from wai.logging import LOGGING_WARNING
 
+from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, binary_required_info
+from ._morphological_filter import MorphologicalFilter, REQUIRED_FORMAT_BINARY
 
-class Skeletonize(Filter):
+
+class Skeletonize(MorphologicalFilter):
     """
     Reduces binary objects to 1 pixel wide representations (skeleton).
     """
@@ -103,24 +103,25 @@ class Skeletonize(Filter):
         if self.size < 1:
             raise Exception("Pruning size must be at least 1, current: %s" % str(self.size))
 
-    def _do_process(self, data):
+    def _required_format(self) -> str:
         """
-        Processes the data record(s).
+        Returns what input format is required for applying the filter.
 
-        :param data: the record(s) to process
-        :return: the potentially updated record(s)
+        :return: the type of image
+        :rtype: str
         """
-        result = []
-        for item in make_list(data):
-            image = ensure_binary(item.image, logger=self.logger())
-            array = np.asarray(image).astype(np.uint8)
-            array_new = pcv.morphology.skeletonize(array)
-            if self.prune:
-                array_new, _, _ = pcv.morphology.prune(skel_img=array_new, size=self.size, mask=array)
-            item_new = type(item)(image_name=item.image_name,
-                                  data=array_to_image(array_new, item.image_format)[1].getvalue(),
-                                  metadata=safe_deepcopy(item.get_metadata()),
-                                  annotation=safe_deepcopy(item.annotation))
-            result.append(item_new)
+        return REQUIRED_FORMAT_BINARY
 
-        return flatten_list(result)
+    def _apply_filter(self, array: np.ndarray) -> np.ndarray:
+        """
+        Applies the morphological filter to the image and returns the numpy array.
+
+        :param array: the image the filter to apply to
+        :type array: np.ndarray
+        :return: the filtered image
+        :rtype: np.ndarray
+        """
+        array_new = pcv.morphology.skeletonize(array)
+        if self.prune:
+            array_new, _, _ = pcv.morphology.prune(skel_img=array_new, size=self.size, mask=array)
+        return array_new
