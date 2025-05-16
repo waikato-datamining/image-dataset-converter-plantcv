@@ -8,7 +8,7 @@ from wai.logging import LOGGING_WARNING
 from build.lib.idc.api import ensure_binary
 from idc.api import flatten_list, make_list, \
     safe_deepcopy, array_to_image, ensure_grayscale, ImageSegmentationData, \
-    APPLY_TO, APPLY_TO_IMAGE, APPLY_TO_ANNOTATIONS, APPLY_TO_BOTH
+    APPLY_TO_IMAGE, APPLY_TO_ANNOTATIONS, APPLY_TO_BOTH, add_apply_to_param
 from seppl.io import Filter
 
 REQUIRED_FORMAT_ANY = "any"
@@ -44,7 +44,7 @@ class MorphologicalFilter(Filter, abc.ABC):
         :rtype: argparse.ArgumentParser
         """
         parser = super()._create_argparser()
-        parser.add_argument("-a", "--apply_to", choices=APPLY_TO, help="Where to apply the filter to.", default=APPLY_TO_IMAGE, required=False)
+        add_apply_to_param(parser)
         return parser
 
     def _apply_args(self, ns: argparse.Namespace):
