@@ -7,21 +7,13 @@ from wai.logging import LOGGING_WARNING
 
 from build.lib.idc.api import ensure_binary
 from idc.api import flatten_list, make_list, \
-    safe_deepcopy, array_to_image, ensure_grayscale, ImageSegmentationData
+    safe_deepcopy, array_to_image, ensure_grayscale, ImageSegmentationData, \
+    APPLY_TO, APPLY_TO_IMAGE, APPLY_TO_ANNOTATIONS, APPLY_TO_BOTH
 from seppl.io import Filter
 
 REQUIRED_FORMAT_ANY = "any"
 REQUIRED_FORMAT_BINARY = "binary"
 REQUIRED_FORMAT_GRAYSCALE = "grayscale"
-
-APPLY_TO_IMAGE = "image"
-APPLY_TO_ANNOTATIONS = "annotations"
-APPLY_TO_BOTH = "both"
-APPLY_TO = [
-    APPLY_TO_BOTH,
-    APPLY_TO_IMAGE,
-    APPLY_TO_ANNOTATIONS
-]
 
 
 class MorphologicalFilter(Filter, abc.ABC):
