@@ -7,7 +7,8 @@ Reduces binary objects to 1 pixel wide representations (skeleton). A binary imag
 
 ```
 usage: pcv-skeletonize [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
-                       [-N LOGGER_NAME] [--skip] [-p] [-s SIZE]
+                       [-N LOGGER_NAME] [--skip] [-a {both,image,annotations}]
+                       [-p] [-s SIZE]
 
 Reduces binary objects to 1 pixel wide representations (skeleton). A binary
 image is required. You can use the 'grayscale-to-binary' for the conversion.
@@ -21,6 +22,8 @@ options:
                         name by default (default: None)
   --skip                Disables the plugin, removing it from the pipeline.
                         (default: False)
+  -a {both,image,annotations}, --apply_to {both,image,annotations}
+                        Where to apply the filter to. (default: image)
   -p, --prune           Whether to prune the skeleton. (default: False)
   -s SIZE, --size SIZE  The size to get pruned off each branch. (default: 50)
 ```

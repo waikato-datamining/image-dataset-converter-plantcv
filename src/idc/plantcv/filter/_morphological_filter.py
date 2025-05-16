@@ -1,22 +1,77 @@
 import abc
+import argparse
 
 import numpy as np
 from PIL import Image
+from wai.logging import LOGGING_WARNING
 
 from build.lib.idc.api import ensure_binary
 from idc.api import flatten_list, make_list, \
-    safe_deepcopy, array_to_image, ensure_grayscale
+    safe_deepcopy, array_to_image, ensure_grayscale, ImageSegmentationData
 from seppl.io import Filter
 
 REQUIRED_FORMAT_ANY = "any"
 REQUIRED_FORMAT_BINARY = "binary"
 REQUIRED_FORMAT_GRAYSCALE = "grayscale"
 
+APPLY_TO_IMAGE = "image"
+APPLY_TO_ANNOTATIONS = "annotations"
+APPLY_TO_BOTH = "both"
+APPLY_TO = [
+    APPLY_TO_BOTH,
+    APPLY_TO_IMAGE,
+    APPLY_TO_ANNOTATIONS
+]
+
 
 class MorphologicalFilter(Filter, abc.ABC):
     """
     Ancestor for morphological filters.
     """
+
+    def __init__(self, apply_to: str = None,
+                 logger_name: str = None, logging_level: str = LOGGING_WARNING):
+        """
+        Initializes the filter.
+
+        :param apply_to: where to apply the filter to
+        :type apply_to: str
+        :param logger_name: the name to use for the logger
+        :type logger_name: str
+        :param logging_level: the logging level to use
+        :type logging_level: str
+        """
+        super().__init__(logger_name=logger_name, logging_level=logging_level)
+        self.apply_to = apply_to
+
+    def _create_argparser(self) -> argparse.ArgumentParser:
+        """
+        Creates an argument parser. Derived classes need to fill in the options.
+
+        :return: the parser
+        :rtype: argparse.ArgumentParser
+        """
+        parser = super()._create_argparser()
+        parser.add_argument("-a", "--apply_to", choices=APPLY_TO, help="Where to apply the filter to.", default=APPLY_TO_IMAGE, required=False)
+        return parser
+
+    def _apply_args(self, ns: argparse.Namespace):
+        """
+        Initializes the object with the arguments of the parsed namespace.
+
+        :param ns: the parsed arguments
+        :type ns: argparse.Namespace
+        """
+        super()._apply_args(ns)
+        self.apply_to = ns.apply_to
+
+    def initialize(self):
+        """
+        Initializes the processing, e.g., for opening files or databases.
+        """
+        super().initialize()
+        if self.apply_to is None:
+            self.apply_to = APPLY_TO_IMAGE
 
     def _nothing_to_do(self, data) -> bool:
         """
@@ -80,13 +135,25 @@ class MorphologicalFilter(Filter, abc.ABC):
 
         result = []
         for item in make_list(data):
-            image = self._ensure_correct_format(item.image)
-            array = np.asarray(image).astype(np.uint8)
-            array_new = self._apply_filter(array)
+            # apply to image
+            if self.apply_to in [APPLY_TO_IMAGE, APPLY_TO_BOTH]:
+                image = self._ensure_correct_format(item.image)
+                array = np.asarray(image).astype(np.uint8)
+                array_new = self._apply_filter(array)
+            else:
+                array_new = np.asarray(item.image).astype(np.uint8)
+
+            # apply to annotations
+            annotation_new = safe_deepcopy(item.annotation)
+            if isinstance(item, ImageSegmentationData) and item.has_annotation():
+                if self.apply_to in [APPLY_TO_ANNOTATIONS, APPLY_TO_BOTH]:
+                    for layer in annotation_new.layers:
+                        annotation_new.layers[layer] = self._apply_filter(annotation_new.layers[layer])
+
             item_new = type(item)(image_name=item.image_name,
                                   data=array_to_image(array_new, item.image_format)[1].getvalue(),
                                   metadata=safe_deepcopy(item.get_metadata()),
-                                  annotation=safe_deepcopy(item.annotation))
+                                  annotation=annotation_new)
             result.append(item_new)
 
         return flatten_list(result)
