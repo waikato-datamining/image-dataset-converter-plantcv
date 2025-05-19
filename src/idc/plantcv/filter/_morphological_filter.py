@@ -5,8 +5,7 @@ import numpy as np
 from PIL import Image
 from wai.logging import LOGGING_WARNING
 
-from build.lib.idc.api import ensure_binary
-from idc.api import flatten_list, make_list, \
+from idc.api import ensure_binary, flatten_list, make_list, \
     safe_deepcopy, array_to_image, ensure_grayscale, ImageSegmentationData, \
     APPLY_TO_IMAGE, APPLY_TO_ANNOTATIONS, APPLY_TO_BOTH, add_apply_to_param
 from seppl.io import Filter
