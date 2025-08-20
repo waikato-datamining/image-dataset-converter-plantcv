@@ -102,6 +102,7 @@ class MorphologicalFilter(Filter, abc.ABC):
         else:
             raise Exception("Unsupported required format: %s" % req_format)
 
+    @abc.abstractmethod
     def _apply_filter(self, array: np.ndarray) -> np.ndarray:
         """
         Applies the morphological filter to the image and returns the numpy array.
