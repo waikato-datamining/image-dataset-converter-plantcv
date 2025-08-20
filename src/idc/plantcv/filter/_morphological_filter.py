@@ -6,13 +6,24 @@ from PIL import Image
 from wai.logging import LOGGING_WARNING
 
 from kasperl.api import make_list, flatten_list, safe_deepcopy
-from idc.api import ensure_binary, array_to_image, ensure_grayscale, ImageSegmentationData, \
-    APPLY_TO_IMAGE, APPLY_TO_ANNOTATIONS, APPLY_TO_BOTH, add_apply_to_param
+from idc.api import ensure_binary, ensure_grayscale, ImageSegmentationData, \
+    APPLY_TO_IMAGE, APPLY_TO_ANNOTATIONS, APPLY_TO_BOTH, add_apply_to_param, image_to_bytesio, binarize_image
 from seppl.io import Filter
 
 REQUIRED_FORMAT_ANY = "any"
 REQUIRED_FORMAT_BINARY = "binary"
 REQUIRED_FORMAT_GRAYSCALE = "grayscale"
+
+OUTPUT_FORMAT_ASIS = "as-is"
+OUTPUT_FORMAT_BINARY = "binary"
+OUTPUT_FORMAT_GRAYSCALE = "grayscale"
+OUTPUT_FORMAT_RGB = "rgb"
+OUTPUT_FORMATS = [
+    OUTPUT_FORMAT_ASIS,
+    OUTPUT_FORMAT_BINARY,
+    OUTPUT_FORMAT_GRAYSCALE,
+    OUTPUT_FORMAT_RGB,
+]
 
 
 class MorphologicalFilter(Filter, abc.ABC):
@@ -20,7 +31,7 @@ class MorphologicalFilter(Filter, abc.ABC):
     Ancestor for morphological filters.
     """
 
-    def __init__(self, apply_to: str = None,
+    def __init__(self, apply_to: str = None, output_format: str = None,
                  logger_name: str = None, logging_level: str = LOGGING_WARNING):
         """
         Initializes the filter.
@@ -34,6 +45,7 @@ class MorphologicalFilter(Filter, abc.ABC):
         """
         super().__init__(logger_name=logger_name, logging_level=logging_level)
         self.apply_to = apply_to
+        self.output_format = output_format
 
     def _create_argparser(self) -> argparse.ArgumentParser:
         """
@@ -44,6 +56,7 @@ class MorphologicalFilter(Filter, abc.ABC):
         """
         parser = super()._create_argparser()
         add_apply_to_param(parser)
+        parser.add_argument("-o", "--output_format", choices=OUTPUT_FORMATS, help="The image format to generate as output.", default=OUTPUT_FORMAT_ASIS, required=False)
         return parser
 
     def _apply_args(self, ns: argparse.Namespace):
@@ -55,6 +68,7 @@ class MorphologicalFilter(Filter, abc.ABC):
         """
         super()._apply_args(ns)
         self.apply_to = ns.apply_to
+        self.output_format = ns.output_format
 
     def initialize(self):
         """
@@ -63,6 +77,8 @@ class MorphologicalFilter(Filter, abc.ABC):
         super().initialize()
         if self.apply_to is None:
             self.apply_to = APPLY_TO_IMAGE
+        if self.output_format is None:
+            self.output_format = OUTPUT_FORMAT_ASIS
 
     def _nothing_to_do(self, data) -> bool:
         """
@@ -135,6 +151,19 @@ class MorphologicalFilter(Filter, abc.ABC):
             else:
                 array_new = np.asarray(item.image).astype(np.uint8)
 
+            # generate image/bytes
+            if self.output_format == OUTPUT_FORMAT_ASIS:
+                img_new = Image.fromarray(np.uint8(array_new))
+            elif self.output_format == OUTPUT_FORMAT_BINARY:
+                img_new = binarize_image(Image.fromarray(np.uint8(array_new)), threshold=1, logger=self.logger())
+            elif self.output_format == OUTPUT_FORMAT_GRAYSCALE:
+                img_new = Image.fromarray(np.uint8(array_new), mode='L')
+            elif self.output_format == OUTPUT_FORMAT_RGB:
+                img_new = Image.fromarray(np.uint8(array_new), mode='RGB')
+            else:
+                raise Exception("Unsupported output format: %s" % self.output_format)
+            bytes_new = image_to_bytesio(img_new, item.image_format).getvalue()
+
             # apply to annotations
             annotation_new = safe_deepcopy(item.annotation)
             if isinstance(item, ImageSegmentationData) and item.has_annotation():
@@ -143,7 +172,7 @@ class MorphologicalFilter(Filter, abc.ABC):
                         annotation_new.layers[layer] = self._apply_filter(annotation_new.layers[layer])
 
             item_new = type(item)(image_name=item.image_name,
-                                  data=array_to_image(array_new, item.image_format)[1].getvalue(),
+                                  data=bytes_new,
                                   metadata=safe_deepcopy(item.get_metadata()),
                                   annotation=annotation_new)
             result.append(item_new)

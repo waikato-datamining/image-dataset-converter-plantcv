@@ -7,7 +7,8 @@ Identifies objects and fills objects that are less than the specified 'size' in 
 
 ```
 usage: pcv-fill [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [-N LOGGER_NAME]
-                [--skip] [-a {both,image,annotations}] [-s SIZE]
+                [--skip] [-a {both,image,annotations}]
+                [-o {as-is,binary,grayscale,rgb}] [-s SIZE]
 
 Identifies objects and fills objects that are less than the specified 'size'
 in pixels. A binary image is required. You can use the 'grayscale-to-binary'
@@ -24,5 +25,8 @@ options:
                         (default: False)
   -a {both,image,annotations}, --apply_to {both,image,annotations}
                         Where to apply the filter to. (default: image)
+  -o {as-is,binary,grayscale,rgb}, --output_format {as-is,binary,grayscale,rgb}
+                        The image format to generate as output. (default: as-
+                        is)
   -s SIZE, --size SIZE  The minimum object area size in pixels. (default: 1)
 ```

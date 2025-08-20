@@ -8,6 +8,7 @@ Flood fills holes in a binary image. A binary image is required. You can use the
 ```
 usage: pcv-fill-holes [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
                       [-N LOGGER_NAME] [--skip] [-a {both,image,annotations}]
+                      [-o {as-is,binary,grayscale,rgb}]
 
 Flood fills holes in a binary image. A binary image is required. You can use
 the 'grayscale-to-binary' for the conversion.
@@ -23,4 +24,7 @@ options:
                         (default: False)
   -a {both,image,annotations}, --apply_to {both,image,annotations}
                         Where to apply the filter to. (default: image)
+  -o {as-is,binary,grayscale,rgb}, --output_format {as-is,binary,grayscale,rgb}
+                        The image format to generate as output. (default: as-
+                        is)
 ```
