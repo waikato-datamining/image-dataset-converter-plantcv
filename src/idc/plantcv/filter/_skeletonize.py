@@ -6,19 +6,25 @@ from plantcv import plantcv as pcv
 from wai.logging import LOGGING_WARNING
 
 from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, binary_required_info
-from ._morphological_filter import MorphologicalFilter, REQUIRED_FORMAT_BINARY
+from idc.filter import ImageAndAnnotationFilter, REQUIRED_FORMAT_BINARY
 
 
-class Skeletonize(MorphologicalFilter):
+class Skeletonize(ImageAndAnnotationFilter):
     """
     Reduces binary objects to 1 pixel wide representations (skeleton).
     """
 
-    def __init__(self, prune: bool = None, size: int = None,
+    def __init__(self, apply_to: str = None, output_format: str = None, incorrect_format_action: str = None, prune: bool = None, size: int = None,
                  logger_name: str = None, logging_level: str = LOGGING_WARNING):
         """
         Initializes the filter.
 
+        :param apply_to: where to apply the filter to
+        :type apply_to: str
+        :param output_format: the output format to use
+        :type output_format: str
+        :param incorrect_format_action: how to react to incorrect input format
+        :type incorrect_format_action: str
         :param prune: whether to prune the skeleton
         :type prune: bool
         :param size: the size to get pruned off each branch
@@ -28,7 +34,8 @@ class Skeletonize(MorphologicalFilter):
         :param logging_level: the logging level to use
         :type logging_level: str
         """
-        super().__init__(logger_name=logger_name, logging_level=logging_level)
+        super().__init__(apply_to=apply_to, output_format=output_format, incorrect_format_action=incorrect_format_action,
+                         logger_name=logger_name, logging_level=logging_level)
         self.prune = prune
         self.size = size
 

@@ -6,19 +6,25 @@ from plantcv import plantcv as pcv
 from wai.logging import LOGGING_WARNING
 
 from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, binary_required_info
-from ._morphological_filter import MorphologicalFilter, REQUIRED_FORMAT_BINARY
+from idc.filter import ImageAndAnnotationFilter, REQUIRED_FORMAT_BINARY
 
 
-class Fill(MorphologicalFilter):
+class Fill(ImageAndAnnotationFilter):
     """
     Identifies objects and fills objects that are less than the specified 'size' in pixels.
     """
 
-    def __init__(self, size: int = None,
+    def __init__(self, apply_to: str = None, output_format: str = None, incorrect_format_action: str = None, size: int = None,
                  logger_name: str = None, logging_level: str = LOGGING_WARNING):
         """
         Initializes the filter.
 
+        :param apply_to: where to apply the filter to
+        :type apply_to: str
+        :param output_format: the output format to use
+        :type output_format: str
+        :param incorrect_format_action: how to react to incorrect input format
+        :type incorrect_format_action: str
         :param size: the minimum object area size
         :type size: int
         :param logger_name: the name to use for the logger
@@ -26,7 +32,8 @@ class Fill(MorphologicalFilter):
         :param logging_level: the logging level to use
         :type logging_level: str
         """
-        super().__init__(logger_name=logger_name, logging_level=logging_level)
+        super().__init__(apply_to=apply_to, output_format=output_format, incorrect_format_action=incorrect_format_action,
+                         logger_name=logger_name, logging_level=logging_level)
         self.size = size
 
     def name(self) -> str:

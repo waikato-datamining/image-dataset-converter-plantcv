@@ -4,10 +4,10 @@ import numpy as np
 from plantcv import plantcv as pcv
 
 from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, binary_required_info
-from ._morphological_filter import MorphologicalFilter, REQUIRED_FORMAT_BINARY
+from idc.filter import ImageAndAnnotationFilter, REQUIRED_FORMAT_BINARY
 
 
-class FillHoles(MorphologicalFilter):
+class FillHoles(ImageAndAnnotationFilter):
     """
     Flood fills holes in a binary image.
     """
