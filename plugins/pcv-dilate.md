@@ -7,9 +7,10 @@ Performs morphological 'dilation' filtering. Adds pixel to center of kernel if c
 
 ```
 usage: pcv-dilate [-h] [-l {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
-                  [-N LOGGER_NAME] [--skip] [-a {both,image,annotations}]
-                  [-o {as-is,binary,grayscale,rgb}] [-I {skip,fail}]
-                  [-k KERNEL_SIZE] [-i NUM_ITERATIONS]
+                  [-N LOGGER_NAME] [--skip] [-I {skip,fail}]
+                  [-a {both,image,annotations}]
+                  [-o {as-is,binary,grayscale,rgb}] [-k KERNEL_SIZE]
+                  [-i NUM_ITERATIONS]
 
 Performs morphological 'dilation' filtering. Adds pixel to center of kernel if
 conditions set in kernel are true. A grayscale image is required. You can use
@@ -24,14 +25,14 @@ options:
                         name by default (default: None)
   --skip                Disables the plugin, removing it from the pipeline.
                         (default: False)
+  -I {skip,fail}, --incorrect_format_action {skip,fail}
+                        The action to undertake if an invalid input format is
+                        encountered. (default: skip)
   -a {both,image,annotations}, --apply_to {both,image,annotations}
                         Where to apply the filter to. (default: image)
   -o {as-is,binary,grayscale,rgb}, --output_format {as-is,binary,grayscale,rgb}
                         The image format to generate as output. (default: as-
                         is)
-  -I {skip,fail}, --incorrect_format_action {skip,fail}
-                        The action to undertake if an invalid input format is
-                        encountered. (default: skip)
   -k KERNEL_SIZE, --kernel_size KERNEL_SIZE
                         The kernel size, must greater than 1 to have an
                         effect. (default: 3)
