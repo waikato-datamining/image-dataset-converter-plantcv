@@ -5,11 +5,11 @@ from kasperl.api import make_list, flatten_list, safe_deepcopy
 from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, \
     ensure_binary, binary_required_info
 from plantcv import plantcv as pcv
-from seppl.io import Filter
+from seppl.io import BatchFilter
 from wai.common.adams.imaging.locateobjects import LocatedObject, LocatedObjects
 
 
-class FindBranchPoints(Filter):
+class FindBranchPoints(BatchFilter):
     """
     Find branch points in a skeletonized image and forwards them as object detection annotations.
     """
