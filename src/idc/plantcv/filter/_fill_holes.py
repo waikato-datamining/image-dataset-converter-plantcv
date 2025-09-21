@@ -3,8 +3,8 @@ from typing import List
 import numpy as np
 from plantcv import plantcv as pcv
 
-from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, binary_required_info
-from idc.filter import ImageAndAnnotationFilter, REQUIRED_FORMAT_BINARY
+from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, binary_required_info, REQUIRED_FORMAT_BINARY
+from idc.filter import ImageAndAnnotationFilter
 
 
 class FillHoles(ImageAndAnnotationFilter):

@@ -5,8 +5,8 @@ import numpy as np
 from plantcv import plantcv as pcv
 from wai.logging import LOGGING_WARNING
 
-from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, grayscale_required_info
-from idc.filter import ImageAndAnnotationFilter, REQUIRED_FORMAT_GRAYSCALE
+from idc.api import ImageClassificationData, ObjectDetectionData, ImageSegmentationData, grayscale_required_info, REQUIRED_FORMAT_GRAYSCALE
+from idc.filter import ImageAndAnnotationFilter
 
 
 class Dilate(ImageAndAnnotationFilter):
