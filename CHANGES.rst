@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.1 (????-??-??)
+------------------
+
+- restricting dependency to `altair<6.0.0` to avoid `ModuleNotFoundError: No module named 'altair.vegalite.v5'`
+
+
 0.1.0 (2025-10-31)
 ------------------
 

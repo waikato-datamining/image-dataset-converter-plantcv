@@ -32,6 +32,7 @@ setup(
     install_requires=[
         "image_dataset_converter",
         "plantcv",
+        "altair<6.0.0",
     ],
     version="0.1.0",
     author='Peter Reutemann',
